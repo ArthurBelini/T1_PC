@@ -1,5 +1,5 @@
-#ifndef MM_AUX
-#define MM_AUX
+#ifndef MM_AUX_H
+#define MM_AUX_H
 
 #include <stdio.h>
 #include <stdlib.h>

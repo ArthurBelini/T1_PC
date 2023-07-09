@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
+#include <time.h>
+#include <unistd.h>
 
 #include "mm_aux.h"
 
@@ -17,6 +19,9 @@ void start_threads();
 int main(int argc, char *argv[]) {
     pthread_t *ts;
     int *ts_ids;
+    struct timespec begin;
+    struct timespec end;
+    double exe_time;
 
     if(argc != 3) {  // tam matriz - qtd threads
         printf("Quantidade de argumentos em linha de comando inválida!\n");
@@ -38,6 +43,7 @@ int main(int argc, char *argv[]) {
 
     // printf("\n");
 
+    timespec_get(&begin, TIME_UTC);
     ts = (pthread_t*) calloc(qtd_t, sizeof(pthread_t));
     ts_ids = (int*) calloc(qtd_t, sizeof(int));
     for(int i = 0; i < qtd_t; i++) {
@@ -48,6 +54,10 @@ int main(int argc, char *argv[]) {
     for(int i = 0; i < qtd_t; i++) {
         pthread_join(ts[i], NULL);
     }
+    timespec_get(&end, TIME_UTC);
+
+    exe_time = (end.tv_sec - begin.tv_sec) + (end.tv_nsec - begin.tv_nsec) / 1000000000.0;
+    printf("Tempo de execução: %lf\n", exe_time);
 
     exit(0);
 }
