@@ -22,6 +22,12 @@ int main(int argc, char *argv[]) {
     struct timespec begin;
     struct timespec end;
     double exe_time;
+    FILE *fp = fopen("resultados.txt","a");
+
+    if(fp == NULL) {
+        printf("Erro ao escrever em arquivo!\n");
+        exit(1);
+    }
 
     if(argc != 3) {  // tam matriz - qtd threads
         printf("Quantidade de argumentos em linha de comando inválida!\n");
@@ -57,7 +63,11 @@ int main(int argc, char *argv[]) {
     timespec_get(&end, TIME_UTC);
 
     exe_time = (end.tv_sec - begin.tv_sec) + (end.tv_nsec - begin.tv_nsec) / 1000000000.0;
-    printf("Tempo de execução: %lf\n", exe_time);
+    // printf("Tempo de execução: %lf\n", exe_time);
+
+    fprintf(fp, "%d %d %lf\n", tam_m, qtd_t, exe_time);
+
+    fclose(fp);
 
     exit(0);
 }
