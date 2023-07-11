@@ -4,16 +4,12 @@
 #include <time.h>
 #include <unistd.h>
 
-struct mm_args {
-    float **m1;
-    float **m2;
-    int t_id;
-    int tam_m;
-    int qtd_t;
-};
-
 // m3 = m1*m2
+float **m1;
+float **m2;
 float **m3;
+int tam_m;
+int qtd_t;
 
 void *mm(void *args);  // Função principal
 // Frunções auxiliares
@@ -21,10 +17,6 @@ void alocate_matrix(float ***m, int tam_m);
 void fill_matrix(float ***m, int tam_m);
    
 int main(int argc, char *argv[]) {
-    float **m1;
-    float **m2;
-    int tam_m;
-    int qtd_t;
     int *ts_ids;
     pthread_t *ts;
     struct timespec begin;
@@ -56,19 +48,15 @@ int main(int argc, char *argv[]) {
     fill_matrix(&m1, tam_m);
     fill_matrix(&m2, tam_m);
 
-    // printf("\n");
+    printf("\n");
 
     timespec_get(&begin, TIME_UTC);
     ts = (pthread_t*) calloc(qtd_t, sizeof(pthread_t));
-    struct mm_args args[qtd_t];
+    ts_ids = (int*) calloc(qtd_t, sizeof(int));
     for(int i = 0; i < qtd_t; i++) {
-        args[i].m1 = m1;
-        args[i].m2 = m2;
-        args[i].t_id = i;
-        args[i].tam_m = tam_m;
-        args[i].qtd_t = qtd_t;
+        ts_ids[i] = i;
 
-        pthread_create(&(ts[i]), NULL, &mm, &args[i]);
+        pthread_create(&(ts[i]), NULL, &mm, &ts_ids[i]);
     }
     for(int i = 0; i < qtd_t; i++) {
         pthread_join(ts[i], NULL);
@@ -76,8 +64,8 @@ int main(int argc, char *argv[]) {
     timespec_get(&end, TIME_UTC);
 
     exe_time = (end.tv_sec - begin.tv_sec) + (end.tv_nsec - begin.tv_nsec) / 1000000000.0;
-    // printf("\n");
-    // printf("Tempo de execução: %lf\n", exe_time);
+    printf("\n");
+    printf("Tempo de execução: %lf\n", exe_time);
 
     fprintf(fp, "%d %d %lf\n", tam_m, qtd_t, exe_time);
     fclose(fp);
@@ -85,18 +73,15 @@ int main(int argc, char *argv[]) {
     exit(0);
 }
 
-void *mm(void *args) {
-    struct mm_args *a;
-    a = (struct mm_args *) args; 
-
-    for(int i = a->t_id; i < a->tam_m; i+=a->qtd_t) {  // Linha
-        for(int j = 0; j < a->tam_m; j++) {  // Coluna
-            for(int k = 0; k < a->tam_m; k++) {  // Elementos
-                m3[i][j] += a->m1[i][k] * a->m2[k][j];
+void *mm(void *t_id) {
+    for(int i = *(int *)t_id; i < tam_m; i+=qtd_t) {  // Linha
+        for(int j = 0; j < tam_m; j++) {  // Coluna
+            for(int k = 0; k < tam_m; k++) {  // Elementos
+                m3[i][j] += m1[i][k] * m2[k][j];
             }
-            // printf("%f ", m3[i][j]);
+            printf("%f ", m3[i][j]);
         }
-        // printf("\n");
+        printf("\n");
     }
 }
 
@@ -115,11 +100,11 @@ void fill_matrix(float ***m, int tam_m) {
 
     for(int i = 0; i < tam_m; i++) {
         (*m)[i] = (float*) calloc(tam_m, sizeof(float));
-        // printf("\n");
+        printf("\n");
         for(int j = 0; j < tam_m; j++) {
             (*m)[i][j] = (float)rand()/(float)RAND_MAX * 1000;
-            // printf("%f ", (*m)[i][j]);
+            printf("%f ", (*m)[i][j]);
         }
     }
-    // printf("\n");
+    printf("\n");
 }
