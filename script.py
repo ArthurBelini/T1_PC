@@ -15,7 +15,7 @@ for i in (1024, 2048, 4096):  # Tamanho da matriz
         os.system('./mm_s ' + str(i))  # Sequencial
 
         data.append(float(fr.readline().split()[-1]))
-        print(data)
+        # print(data)
 
     calculate_mean()
 
@@ -26,7 +26,7 @@ for i in (1024, 2048, 4096):  # Tamanho da matriz
             os.system('./mm_p ' + str(i) + ' ' + str(j))  # Paralelo
 
             data.append(float(fr.readline().split()[-1]))
-            print(data)
+            # print(data)
 
         calculate_mean()
         

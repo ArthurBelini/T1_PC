@@ -47,7 +47,7 @@ int main(int argc, char *argv[]) {
     // printf("\n");
     // printf("Tempo de execução: %lf\n", exe_time);
 
-    // fprintf(fp, "%d %lf\n", tam_m, exe_time);
+    fprintf(fp, "%d %lf\n", tam_m, exe_time);
     fclose(fp);
 
     exit(0);
