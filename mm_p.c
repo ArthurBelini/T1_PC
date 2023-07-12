@@ -13,8 +13,9 @@ int qtd_t;
 
 void *mm(void *args);  // Função principal
 // Frunções auxiliares
-void alocate_matrix(float ***m, int tam_m);
-void fill_matrix(float ***m, int tam_m);
+void allocate_matrix(float ***m);
+void fill_matrix(float ***m);
+void free_matrix(float **m);
    
 int main(int argc, char *argv[]) {
     int *ts_ids;
@@ -43,10 +44,10 @@ int main(int argc, char *argv[]) {
         exit(1);
     }
 
-    alocate_matrix(&m3, tam_m);
+    allocate_matrix(&m3);
     srand(time(NULL));
-    fill_matrix(&m1, tam_m);
-    fill_matrix(&m2, tam_m);
+    fill_matrix(&m1);
+    fill_matrix(&m2);
 
     // printf("\n");
 
@@ -61,7 +62,12 @@ int main(int argc, char *argv[]) {
     for(int i = 0; i < qtd_t; i++) {
         pthread_join(ts[i], NULL);
     }
+
     timespec_get(&end, TIME_UTC);
+
+    free_matrix(m1);
+    free_matrix(m2);
+    free_matrix(m3);
 
     exe_time = (end.tv_sec - begin.tv_sec) + (end.tv_nsec - begin.tv_nsec) / 1000000000.0;
     // printf("\n");
@@ -87,7 +93,7 @@ void *mm(void *t_id) {
 
 ////////////////////////////////////////////////////////// Funções auxiliares
 
-void alocate_matrix(float ***m, int tam_m) {
+void allocate_matrix(float ***m) {
     *m = (float**) calloc(tam_m, sizeof(float*));
 
     for(int i = 0; i < tam_m; i++) {
@@ -95,7 +101,7 @@ void alocate_matrix(float ***m, int tam_m) {
     }
 }
 
-void fill_matrix(float ***m, int tam_m) {
+void fill_matrix(float ***m) {
     *m = (float**) calloc(tam_m, sizeof(float*));
 
     for(int i = 0; i < tam_m; i++) {
@@ -107,4 +113,12 @@ void fill_matrix(float ***m, int tam_m) {
         }
     }
     // printf("\n");
+}
+
+void free_matrix(float **m) {
+    for(int i = 0; i < tam_m; i++) {
+        free(m[i]);
+    }
+
+    free(m);
 }
