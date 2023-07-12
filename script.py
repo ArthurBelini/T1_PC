@@ -1,10 +1,21 @@
 import os
 
+mean = None
+speedups = []
+efficiencies = []
 fr = open("resultados.txt", "r")
 
-def calculate_mean():
+def reset():
+    mean = None
+    speedups = []
+    efficiencies = []
+
+def get_mean():
+    return (sum(data) / 10)
+
+def write(string):
     fw = open("resultados.txt", "a")
-    fw.write(str(sum(data) / 10) + '\n')
+    fw.write(string)
     fw.close()
     fr.readline()
 
@@ -17,7 +28,8 @@ for i in (1024, 2048, 4096):  # Tamanho da matriz
         data.append(float(fr.readline().split()[-1]))
         # print(data)
 
-    calculate_mean()
+    mean = get_mean()
+    write(str(get_mean()) + '\n')
 
     for j in (2, 4, 8, 16):  # Quantidade de threads
         data = []
@@ -28,10 +40,16 @@ for i in (1024, 2048, 4096):  # Tamanho da matriz
             data.append(float(fr.readline().split()[-1]))
             # print(data)
 
-        calculate_mean()
-        
+        speedups.append(mean / get_mean())
+        efficiencies.append(speedups[-1] / j)
+
+        write('m ' + str(get_mean()) + '\n')
+        write('s ' + str(speedups[-1]) + '\n')
+        write('e ' + str(efficiencies[-1]) + '\n')
+    
+    reset()
+
+    write(f's_curve (0,0)(2,{speedups[0]})(4,{speedups[1]})(8,{speedups[2]})(16,{speedups[3]})' + '\n')
+    write(f'e_curve (0,0)(2,{efficiencies[0]})(4,{efficiencies[1]})(8,{efficiencies[2]})(16,{efficiencies[3]})' + '\n')
+    
 fr.close()
-
-
-
-
