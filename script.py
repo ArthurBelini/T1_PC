@@ -14,7 +14,7 @@ def write(string):
     fw.close()
     fr.readline()
 
-for i in (1024, 2048, 4096):  # Tamanho da matriz
+for i in (256, 512, 1024):  # Tamanho da matriz
     mean = None
     speedups = []
     efficiencies = []
@@ -27,7 +27,7 @@ for i in (1024, 2048, 4096):  # Tamanho da matriz
         # print(data)
 
     mean = get_mean()
-    write(str(get_mean()) + '\n')
+    write('m ' + str(get_mean()) + '\n')
 
     for j in (2, 4, 8, 16):  # Quantidade de threads
         data = []
