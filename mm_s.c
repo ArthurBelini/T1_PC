@@ -2,17 +2,15 @@
 #include <stdlib.h>
 #include <time.h>
 
+#include "mm_aux.h"
+
 // m3 = m1*m2
 float **m1;
 float **m2;
 float **m3;
 int tam_m;
 
-void mm();  // Função principal
-// Frunções auxiliares
-void allocate_matrix(float ***m);
-void fill_matrix(float ***m);
-void free_matrix(float **m);
+void mm();
    
 int main(int argc, char *argv[]) {
     struct timespec begin;
@@ -33,10 +31,10 @@ int main(int argc, char *argv[]) {
         exit(1);
     }
 
-    allocate_matrix(&m3);
+    allocate_matrix(&m3, tam_m);
     srand(time(NULL));
-    fill_matrix(&m1);
-    fill_matrix(&m2);
+    fill_matrix(&m1, tam_m);
+    fill_matrix(&m2, tam_m);
 
     // printf("\n");
 
@@ -44,9 +42,9 @@ int main(int argc, char *argv[]) {
     mm();
     timespec_get(&end, TIME_UTC);
 
-    free_matrix(m1);
-    free_matrix(m2);
-    free_matrix(m3);
+    free_matrix(m1, tam_m);
+    free_matrix(m2, tam_m);
+    free_matrix(m3, tam_m);
 
     exe_time = (end.tv_sec - begin.tv_sec) + (end.tv_nsec - begin.tv_nsec) / 1000000000.0;
     // printf("\n");
@@ -68,36 +66,4 @@ void mm() {
         }
         // printf("\n");
     }
-}
-
-////////////////////////////////////////////////////////// Funções auxiliares
-
-void allocate_matrix(float ***m) {
-    *m = (float**) calloc(tam_m, sizeof(float*));
-
-    for(int i = 0; i < tam_m; i++) {
-        (*m)[i] = (float*) calloc(tam_m, sizeof(float));
-    }
-}
-
-void fill_matrix(float ***m) {
-    *m = (float**) calloc(tam_m, sizeof(float*));
-
-    for(int i = 0; i < tam_m; i++) {
-        (*m)[i] = (float*) calloc(tam_m, sizeof(float));
-        // printf("\n");
-        for(int j = 0; j < tam_m; j++) {
-            (*m)[i][j] = (float)rand()/(float)RAND_MAX * 1000;
-            // printf("%f ", (*m)[i][j]);
-        }
-    }
-    // printf("\n");
-}
-
-void free_matrix(float **m) {
-    for(int i = 0; i < tam_m; i++) {
-        free(m[i]);
-    }
-
-    free(m);
 }
